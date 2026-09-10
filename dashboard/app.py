@@ -674,12 +674,33 @@ else:
     ])
 
 # ====================================
+# MAC FAILED LOGINS & UNIFIED LOG DATA
+# ====================================
+
+mac_logins_path = os.path.join(BASE_DIR, "..", "datasets", "mac_failed_logins.csv")
+
+if os.path.exists(mac_logins_path):
+    mac_logins_df = pd.read_csv(
+        mac_logins_path,
+        on_bad_lines="skip"
+    )
+    if "event" in mac_logins_df.columns and "details" not in mac_logins_df.columns:
+        mac_logins_df = mac_logins_df.rename(columns={"event": "details"})
+else:
+    mac_logins_df = pd.DataFrame(columns=[
+        "time",
+        "attack_type",
+        "risk_score",
+        "risk_level",
+        "source",
+        "details"
+    ])
+
+# ====================================
 # SOURCE LABELS
 # ====================================
 
 endpoint_df["source"] = "Endpoint Logs"
-
-
 
 # ====================================
 # COMBINE DATASETS & FILTERS
@@ -688,7 +709,8 @@ endpoint_df["source"] = "Endpoint Logs"
 combined_df = pd.concat(
     [
         endpoint_df,
-        realtime_df
+        realtime_df,
+        mac_logins_df
     ],
     ignore_index=True
 )

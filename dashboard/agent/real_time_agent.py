@@ -42,9 +42,9 @@ with open(output_file, "a", newline="") as f:
             "details"
         ])
 
-print("Real-time Mac Threat Agent Started...")
-print("Monitoring real Mac processes...")
-print("Run nmap/tcpdump/wireshark/sqlmap to test.\n")
+print("Real-time Mac Threat Agent Started...", flush=True)
+print("Monitoring real Mac processes...", flush=True)
+print("Run nmap/tcpdump/wireshark/sqlmap to test.\n", flush=True)
 
 while True:
     for proc in psutil.process_iter(["pid", "name", "cmdline"]):
@@ -62,7 +62,7 @@ while True:
                     seen_pids.add(pid)
 
                     alert = [
-                        datetime.now(),
+                        datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                         "Suspicious Process Execution",
                         name,
                         pid,
@@ -75,8 +75,9 @@ while True:
                     with open(output_file, "a", newline="") as f:
                         writer = csv.writer(f)
                         writer.writerow(alert)
+                        f.flush()
 
-                    print(f"[ALERT] {name} detected | PID: {pid} | Keyword: {keyword}")
+                    print(f"[ALERT] {name} detected | PID: {pid} | Keyword: {keyword}", flush=True)
                     break
 
         except (psutil.NoSuchProcess, psutil.AccessDenied):
